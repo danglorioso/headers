@@ -1,65 +1,312 @@
-import Image from "next/image";
+'use client';
+
+import { useState } from 'react';
+import { Check, Copy, Code } from 'lucide-react';
+
+interface HeaderTemplate {
+  name: string;
+  description: string;
+  template: string;
+}
+
+const headerTemplates: HeaderTemplate[] = [
+  {
+    name: "Standard",
+    description: "Basic file header with author and date information",
+    template: `/**************************************************************
+ *
+ *                [filename]
+ *
+ *         Author: [Your Name]
+ *           Date: ${new Date().toLocaleDateString()}
+ *
+ *        Summary: [Brief description]
+ * 
+ **************************************************************/`
+  },
+  {
+    name: "Assignment",
+    description: "Perfect for school assignments and coursework",
+    template: `/**************************************************************
+ *
+ *                [filename]
+ *
+ *     Assignment: [Assignment Name]
+ *         Author: [Your Name]
+ *           Date: ${new Date().toLocaleDateString()}
+ *
+ *        Summary: [Brief description]
+ * 
+ **************************************************************/`
+  },
+  {
+    name: "Academic",
+    description: "Comprehensive header for academic projects",
+    template: `/**************************************************************
+ *
+ *                [filename]
+ *
+ *       Course: [Course Name]
+ *   Instructor: [Instructor Name]
+ *         Date: ${new Date().toLocaleDateString()}
+ *       Author: [Your Name]
+ *
+ *      Project: [Project Title]
+ *     Filename: [filename]
+ *  Description: 
+ *    [A brief description of the file purpose and contents]
+ *
+ **************************************************************/`
+  },
+  {
+    name: "Personal",
+    description: "For personal projects and side ventures",
+    template: `/**************************************************************
+ *
+ *                        [filename]
+ *
+ *       Project: [Project Name]
+ *       Created: ${new Date().toLocaleDateString()}
+ *        Author: [Your Name]
+ *
+ *   Description:
+ *   [A brief description of the file purpose and contents]
+ *
+**************************************************************/`
+  },
+  {
+    name: "Professional",
+    description: "Professional template with version tracking",
+    template: `/**************************************************************
+ *
+ *                [filename]
+ *
+ *   Project Name: [Project Name]
+ *         Module: [Module Name]
+ *         Author: [Your Name]
+ *           Date: ${new Date().toLocaleDateString()}
+ *    Last Update: [Last Update Date]
+ *        Version: 1.0.0
+ *
+ *   Summary:
+ *   [A brief description of the file purpose and contents]
+ * 
+ **************************************************************/`
+  },
+  {
+    name: "Open Source",
+    description: "For open source contributions and projects",
+    template: `/**************************************************************
+ *
+ *                [filename]
+ *
+ *   Open Source Project: [Project Name]
+ *        Repository URL: [Repository URL]
+ *           Contributor: [Your Name]
+ *                  Date: ${new Date().toLocaleDateString()}
+ *
+ *   Description: 
+ *   [A brief description of the file purpose and contents]
+ *
+ **************************************************************/`
+  },
+  {
+    name: "Minimal",
+    description: "Clean and simple header for quick use",
+    template: `/**************************************************************
+ *
+ *                [filename]
+ *         Author: [Your Name]
+ *           Date: ${new Date().toLocaleDateString()}
+ *
+ **************************************************************/`
+  },
+  {
+    name: "Detailed",
+    description: "Comprehensive header with change log tracking",
+    template: `/**************************************************************
+ *
+ *                [filename]
+ *
+ *   Project Name: [Project Name]
+ *         Module: [Module Name]
+ *         Author: [Your Name]
+ *           Date: ${new Date().toLocaleDateString()}
+ *        Version: 1.0.0
+ *
+ *   Description: 
+ *   [A brief description of the file purpose and contents]
+ * 
+ *   Change Log:
+ *   - [Date]: [Description of changes]
+ *   - [Date]: [Description of changes]
+ *
+ **************************************************************/`
+  },
+  {
+    name: "Machine Learning",
+    description: "Specialized for ML and data science projects",
+    template: `/**************************************************************
+ *
+ *                [filename]
+ *
+ *      ML Project: [Project Name]
+ *          Author: [Your Name]
+ *            Date: ${new Date().toLocaleDateString()}
+ *    Dataset Used: [Dataset Name]
+ *       Algorithm: [Algorithm Name]
+ *
+ *   Description:
+ *   [A brief description of the file purpose and contents]
+ *
+ **************************************************************/`
+  },
+  {
+    name: "Script",
+    description: "For standalone scripts and utilities",
+    template: `/**************************************************************
+ *
+ *                [filename]
+ *
+ *      Script Name: [filename]
+ *           Author: [Your Name]
+ *             Date: ${new Date().toLocaleDateString()} 
+ *
+ *    Description: 
+ *    [A brief description of what the script does]
+ *
+ *    Usage: 
+ *    [How to run the script]
+ *
+ **************************************************************/`
+  },
+  {
+    name: "Test Suite",
+    description: "For test files and test suites",
+    template: `/**************************************************************
+ *
+ *                [filename]
+ *
+ *    Test Suite: [Test Suite Name]
+ *        Module: [Module Name]
+ *        Author: [Your Name]
+ *          Date: ${new Date().toLocaleDateString()}
+ *
+ *   Description:
+ *   [A brief description of the tests in this file]
+ * 
+ *   Test Cases:
+ *   - [Test Case 1]
+ *   - [Test Case 2]
+ *
+ **************************************************************/`
+  },
+  {
+    name: "Web Development",
+    description: "For web development projects with technology stack",
+    template: `/**************************************************************
+ *
+ *                [filename]
+ *
+ *   Project Name: [Project Name]
+ *         Module: [Module Name]
+ *         Author: [Your Name]
+ *           Date: ${new Date().toLocaleDateString()}
+ *    Last Update: [Last Update Date]
+ *
+ *   Technologies Used:
+ *   - [Technology 1]
+ *   - [Technology 2]
+ *
+ *   Description: 
+ *   [A brief description of the file purpose and contents]
+ * 
+ **************************************************************/`
+  }
+];
 
 export default function Home() {
+  const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
+
+  const copyToClipboard = async (text: string, index: number) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopiedIndex(index);
+      setTimeout(() => setCopiedIndex(null), 2000);
+    } catch (err) {
+      console.error('Failed to copy text: ', err);
+    }
+  };
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800">
+      <div className="container mx-auto px-4 py-8">
+        {/* Header */}
+        <div className="text-center mb-12">
+          <div className="flex items-center justify-center gap-2 mb-4">
+            <Code className="w-8 h-8 text-blue-600 dark:text-blue-400" />
+            <h1 className="text-4xl font-bold text-gray-900 dark:text-white">
+              Header Templates
+            </h1>
+          </div>
+          <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
+            Professional file header templates for your code. Click to copy and paste into your files.
           </p>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+
+        {/* Template Grid */}
+        <div className="grid gap-6 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-2">
+          {headerTemplates.map((template, index) => (
+            <div
+              key={index}
+              className="bg-white dark:bg-slate-800 rounded-lg shadow-lg border border-gray-200 dark:border-slate-700 overflow-hidden hover:shadow-xl transition-shadow duration-300"
+            >
+              {/* Template Header */}
+              <div className="px-6 py-4 bg-gray-50 dark:bg-slate-700 border-b border-gray-200 dark:border-slate-600">
+                <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-1">
+                  {template.name}
+                </h3>
+                <p className="text-sm text-gray-600 dark:text-gray-300">
+                  {template.description}
+                </p>
+              </div>
+
+              {/* Template Code */}
+              <div className="relative">
+                <pre className="p-6 text-sm bg-gray-900 text-green-400 font-mono overflow-x-auto">
+                  <code>{template.template}</code>
+                </pre>
+                
+                {/* Copy Button */}
+                <button
+                  onClick={() => copyToClipboard(template.template, index)}
+                  className="absolute top-4 right-4 p-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md transition-colors duration-200 flex items-center gap-2"
+                  title="Copy to clipboard"
+                >
+                  {copiedIndex === index ? (
+                    <>
+                      <Check className="w-4 h-4" />
+                      <span className="text-xs">Copied!</span>
+                    </>
+                  ) : (
+                    <>
+                      <Copy className="w-4 h-4" />
+                      <span className="text-xs">Copy</span>
+                    </>
+                  )}
+                </button>
+              </div>
+            </div>
+          ))}
         </div>
-      </main>
+
+        {/* Footer */}
+        <div className="text-center mt-12 py-8 border-t border-gray-200 dark:border-slate-700">
+          <p className="text-gray-600 dark:text-gray-400">
+            Choose the template that best fits your project needs. Remember to replace placeholders with your actual information!
+          </p>
+        </div>
+      </div>
     </div>
   );
 }
