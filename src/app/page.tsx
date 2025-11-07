@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { Check, Copy, Code } from "lucide-react";
+import Image from "next/image";
+import { Check, Copy } from "lucide-react";
 
 interface HeaderTemplate {
     name: string;
@@ -244,14 +245,29 @@ export default function Home() {
                 {/* Header */}
                 <div className="text-center mb-12">
                     <div className="flex items-center justify-center gap-2 mb-4">
-                        <Code className="w-8 h-8 text-blue-600 dark:text-blue-400" />
-                        <h1 className="text-4xl font-bold text-gray-900 dark:text-white">
+                        {/* <Code className="w-8 h-8 text-blue-600 dark:text-blue-400" /> */}
+                        <Image 
+                            src="/icon.png" 
+                            alt="Code Icon" 
+                            width={32} 
+                            height={32}
+                            className="w-6 h-6 sm:w-8 sm:h-8 md:w-12 md:h-12" 
+                        />
+                        <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 dark:text-white pl-1">
                             Header Templates
                         </h1>
                     </div>
                     <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
-                        Professional file header templates for your code. Click
-                        to copy and paste into your files.
+                      Header documentation templates from Dan Glorioso's Header Hero VSCode Extension: {" "}
+                      <a
+                        href="https://danglorioso.com/header-hero"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-blue-600 dark:text-blue-400 hover:underline"
+                      >
+                        danglorioso.com/header-hero
+                      </a>
+                      .
                     </p>
                 </div>
 
