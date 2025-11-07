@@ -1,14 +1,34 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
-import { Check, Copy } from "lucide-react";
+import { Check, Copy, ChevronDown } from "lucide-react";
 
 interface HeaderTemplate {
     name: string;
     description: string;
     template: string;
 }
+
+interface CommentStyle {
+    name: string;
+    prefix: string;
+    middle: string;
+    suffix: string;
+    borderChar: string;
+    description: string;
+}
+
+const commentStyles: CommentStyle[] = [
+    { name: "C/Java Style", prefix: "/*", middle: " *", suffix: " */", borderChar: "*", description: "/* ... */" },
+    { name: "Hash/Python", prefix: "#", middle: "#", suffix: "#", borderChar: "#", description: "# ... #" },
+    { name: "Double Slash", prefix: "//", middle: "//", suffix: "//", borderChar: "/", description: "// ... //" },
+    { name: "Percent/LaTeX", prefix: "%", middle: "%", suffix: "%", borderChar: "%", description: "% ... %" },
+    { name: "Double Dash", prefix: "--", middle: "--", suffix: "--", borderChar: "-", description: "-- ... --" },
+    { name: "Double Quote", prefix: '""', middle: '""', suffix: '""', borderChar: '"', description: '"" ... ""' },
+    { name: "HTML Comment", prefix: "<!--", middle: " -", suffix: " -->", borderChar: "-", description: "<!-- ... -->" },
+    { name: "Haskell Style", prefix: "{-", middle: " -", suffix: " -}", borderChar: "-", description: "{- ... -}" },
+];
 
 const headerTemplates: HeaderTemplate[] = [
     {
@@ -226,8 +246,56 @@ const headerTemplates: HeaderTemplate[] = [
     },
 ];
 
+const generateTemplate = (baseTemplate: string, commentStyle: CommentStyle): string => {
+    const lines = baseTemplate.split('\n');
+    const newLines = lines.map((line, index) => {
+        if (index === 0) {
+            // First line: /* + 62 asterisks = 64 chars total
+            return line.replace('/**************************************************************', 
+                commentStyle.prefix + commentStyle.borderChar.repeat(62));
+        } else if (index === lines.length - 1) {
+            // Last line: Only C/Java style has leading space
+            if (commentStyle.name === "C/Java Style") {
+                // C/Java: space + 62 asterisks + / = 64 chars total  
+                return line.replace(' **************************************************************/', 
+                    ' ' + commentStyle.borderChar.repeat(62) + '/');
+            } else {
+                // All other styles: no leading space, just borderChars + suffix
+                if (line.includes(' **************************************************************/')) {
+                    // Remove the leading space for non-C/Java styles
+                    return commentStyle.borderChar.repeat(62) + commentStyle.suffix;
+                } else {
+                    return line.replace('**************************************************************/', 
+                        commentStyle.borderChar.repeat(62) + commentStyle.suffix);
+                }
+            }
+        } else if (line.trim().startsWith('*')) {
+            // Middle lines: replace * with middle character
+            return line.replace(' *', commentStyle.middle);
+        }
+        return line;
+    });
+    return newLines.join('\n');
+};
+
 export default function Home() {
     const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
+    const [selectedCommentStyle, setSelectedCommentStyle] = useState<CommentStyle>(commentStyles[0]);
+    const [dropdownOpen, setDropdownOpen] = useState(false);
+    const dropdownRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+                setDropdownOpen(false);
+            }
+        };
+
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, []);
 
     const copyToClipboard = async (text: string, index: number) => {
         try {
@@ -242,6 +310,39 @@ export default function Home() {
     return (
         <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800">
             <div className="container mx-auto px-4 py-8">
+                {/* Comment Style Dropdown - Top right corner */}
+                <div className="flex justify-end mb-4">
+                    <div className="relative" ref={dropdownRef}>
+                        <button
+                            onClick={() => setDropdownOpen(!dropdownOpen)}
+                            className="flex items-center gap-2 px-3 py-2 bg-white dark:bg-slate-800 border border-gray-300 dark:border-slate-600 rounded-lg shadow-sm hover:shadow-md transition-shadow text-xs text-gray-600 dark:text-gray-400"
+                        >
+                            <span>{selectedCommentStyle.name}</span>
+                            <ChevronDown className={`w-3 h-3 transition-transform ${dropdownOpen ? 'rotate-180' : ''}`} />
+                        </button>
+                        
+                        {dropdownOpen && (
+                            <div className="absolute top-full mt-2 right-0 bg-white dark:bg-slate-800 border border-gray-300 dark:border-slate-600 rounded-lg shadow-lg z-10 min-w-64">
+                                {commentStyles.map((style, index) => (
+                                    <button
+                                        key={index}
+                                        onClick={() => {
+                                            setSelectedCommentStyle(style);
+                                            setDropdownOpen(false);
+                                        }}
+                                        className={`w-full text-left px-4 py-3 text-sm hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors border-b border-gray-100 dark:border-slate-700 last:border-b-0 ${
+                                            selectedCommentStyle.name === style.name ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300' : 'text-gray-700 dark:text-gray-300'
+                                        }`}
+                                    >
+                                        <div className="font-medium">{style.name}</div>
+                                        <div className="text-xs text-gray-500 dark:text-gray-400 font-mono">{style.description}</div>
+                                    </button>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+                </div>
+
                 {/* Header */}
                 <div className="text-center mb-12">
                     <div className="flex items-center justify-center gap-2 mb-4">
@@ -258,7 +359,7 @@ export default function Home() {
                         </h1>
                     </div>
                     <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
-                      Header documentation templates from Dan Glorioso's Header Hero VSCode Extension: {" "}
+                      Header documentation templates from Dan Glorioso&apos;s Header Hero VSCode Extension: {" "}
                       <a
                         href="https://danglorioso.com/header-hero"
                         target="_blank"
@@ -291,14 +392,14 @@ export default function Home() {
                             {/* Template Code */}
                             <div className="relative">
                                 <pre className="p-6 text-sm bg-gray-900 text-green-400 font-mono overflow-x-auto">
-                                    <code>{template.template}</code>
+                                    <code>{generateTemplate(template.template, selectedCommentStyle)}</code>
                                 </pre>
 
                                 {/* Copy Button */}
                                 <button
                                     onClick={() =>
                                         copyToClipboard(
-                                            template.template,
+                                            generateTemplate(template.template, selectedCommentStyle),
                                             index
                                         )
                                     }
