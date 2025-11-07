@@ -33,7 +33,7 @@ const commentStyles: CommentStyle[] = [
 const headerTemplates: HeaderTemplate[] = [
     {
         name: "Standard",
-        description: "Basic file header with author and date information",
+        description: "Default file header that is good for almost every project",
         template: `/**************************************************************
  *
  *                [filename]
@@ -46,14 +46,30 @@ const headerTemplates: HeaderTemplate[] = [
  **************************************************************/`,
     },
     {
-        name: "Assignment",
-        description: "Perfect for school assignments and coursework",
+        name: "Modified File",
+        description: "Good for collaborative projects, like JumboCode",
         template: `/**************************************************************
  *
  *                [filename]
  *
- *     Assignment: [Assignment Name]
- *         Author: [Your Name]
+ *      Created by: [Your Name (+ Partners)]
+ *      Created on: ${new Date().toLocaleDateString()}
+ *     Modified by: [Modifier's Name]
+ *     Modified on: ${new Date().toLocaleDateString()}
+ * 
+ *        Summary: [Brief description]
+ * 
+ **************************************************************/`,
+    },
+    {
+        name: "Assignment",
+        description: "Headers for academic assignments, like in CS 11, 15, 40",
+        template: `/**************************************************************
+ *
+ *                [filename]
+ *
+ *     Assignment: [HW #: Assignment Name]
+ *         Author: [Your Name] (UTLN)
  *           Date: ${new Date().toLocaleDateString()}
  *
  *        Summary: [Brief description]
@@ -73,15 +89,15 @@ const headerTemplates: HeaderTemplate[] = [
  *       Author: [Your Name]
  *
  *      Project: [Project Title]
- *     Filename: [filename]
+ *      Purpose: [Brief description of how the file fits into the project]
  *  Description: 
- *    [A brief description of the file purpose and contents]
+ *    [A brief description of the file contents]
  *
  **************************************************************/`,
     },
     {
         name: "Personal",
-        description: "For personal projects and side ventures",
+        description: "For personal projects, hobbies, side quests",
         template: `/**************************************************************
  *
  *                        [filename]
@@ -97,7 +113,7 @@ const headerTemplates: HeaderTemplate[] = [
     },
     {
         name: "Professional",
-        description: "Professional template with version tracking",
+        description: "Template with version tracking",
         template: `/**************************************************************
  *
  *                [filename]
@@ -116,7 +132,7 @@ const headerTemplates: HeaderTemplate[] = [
     },
     {
         name: "Open Source",
-        description: "For open source contributions and projects",
+        description: "For open source contributions",
         template: `/**************************************************************
  *
  *                [filename]
@@ -133,7 +149,7 @@ const headerTemplates: HeaderTemplate[] = [
     },
     {
         name: "Minimal",
-        description: "Clean and simple header for quick use",
+        description: "Clean and simple",
         template: `/**************************************************************
  *
  *                [filename]
@@ -144,7 +160,7 @@ const headerTemplates: HeaderTemplate[] = [
     },
     {
         name: "Detailed",
-        description: "Comprehensive header with change log tracking",
+        description: "Comprehensive header- includes change log",
         template: `/**************************************************************
  *
  *                [filename]
@@ -166,7 +182,7 @@ const headerTemplates: HeaderTemplate[] = [
     },
     {
         name: "Machine Learning",
-        description: "Specialized for ML and data science projects",
+        description: "Useful for ML and data science projects",
         template: `/**************************************************************
  *
  *                [filename]
@@ -184,7 +200,7 @@ const headerTemplates: HeaderTemplate[] = [
     },
     {
         name: "Script",
-        description: "For standalone scripts and utilities",
+        description: "For standalone scripts or utilities",
         template: `/**************************************************************
  *
  *                [filename]
@@ -203,7 +219,7 @@ const headerTemplates: HeaderTemplate[] = [
     },
     {
         name: "Test Suite",
-        description: "For test files and test suites",
+        description: "Good for tracking tests in a test suite",
         template: `/**************************************************************
  *
  *                [filename]
@@ -224,7 +240,7 @@ const headerTemplates: HeaderTemplate[] = [
     },
     {
         name: "Web Development",
-        description: "For web development projects with technology stack",
+        description: "For full-stack web development projects",
         template: `/**************************************************************
  *
  *                [filename]
@@ -233,7 +249,7 @@ const headerTemplates: HeaderTemplate[] = [
  *         Module: [Module Name]
  *         Author: [Your Name]
  *           Date: ${new Date().toLocaleDateString()}
- *    Last Update: [Last Update Date]
+ *   Last Updated: [Last Update Date]
  *
  *   Technologies Used:
  *   - [Technology 1]
@@ -359,7 +375,16 @@ export default function Home() {
                         </h1>
                     </div>
                     <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
-                      Header documentation templates from Dan Glorioso&apos;s Header Hero VSCode Extension: {" "}
+                      Header documentation templates from {" "}
+                      <a
+                        href="https://danglorioso.com"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-blue-600 dark:text-blue-400 hover:underline"
+                      >
+                        Dan Glorioso
+                      </a>
+                      &apos;s Header Hero VSCode Extension: {" "}
                       <a
                         href="https://danglorioso.com/header-hero"
                         target="_blank"
