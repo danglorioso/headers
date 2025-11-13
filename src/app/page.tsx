@@ -260,6 +260,27 @@ const headerTemplates: HeaderTemplate[] = [
  * 
  **************************************************************/`,
     },
+    {
+        name: "API/Library",
+        description: "For publishing APIs, SKDs, or libraries",
+        template: `/**************************************************************
+ *
+ *                [filename]
+ *
+ *      Library: [Library Name]
+ *      Version: [Version Number]
+ *       Author: [Your Name]
+ *         Date: ${new Date().toLocaleDateString()}
+ *
+ *    Endpoints: [List key endpoints/functions]
+ *   Parameters: [Key parameters this file handles]
+ *      Returns: [What this file returns/exports]
+ *
+ *      Example Usage:
+ *      [Brief code example of how to use this file]
+ *
+ **************************************************************/`,
+    },
 ];
 
 const generateTemplate = (baseTemplate: string, commentStyle: CommentStyle): string => {
